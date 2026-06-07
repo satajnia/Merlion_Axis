@@ -1,0 +1,35 @@
+import FreeCAD as App
+import Part
+
+if App.ActiveDocument is None:
+App.newDocument("ParaboloideHiperbolico")
+
+doc = App.ActiveDocument
+
+a = 15.0
+b = 15.0
+
+lim_x = 25
+lim_y = 25
+resolucion = 40
+
+secciones = []
+
+for i in range(resolucion + 1):
+x = -lim_x + (2.0 * lim_x * i / resolucion)
+puntos = []
+
+for j in range(resolucion + 1):
+    y = -lim_y + (2.0 * lim_y * j / resolucion)
+    z = (x**2 / a) - (y**2 / b)
+    puntos.append(App.Base.Vector(x, y, z))
+
+polyline = Part.makePolygon(puntos)
+secciones.append(polyline)
+
+superficie = Part.makeLoft(secciones, False, False)
+
+objeto_cad = doc.addObject("Part::Feature", "Silla_De_Montar")
+objeto_cad.Shape = superficie
+
+doc.recompute()
