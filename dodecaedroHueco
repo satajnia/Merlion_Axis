@@ -1,0 +1,142 @@
+import FreeCAD as App
+import Part
+import math
+
+#______________________________________________________________________________________________________
+radio_tubo_externo = 15.0
+grosor_pared = 4.0
+radio_esfera_corte = 15
+
+#_________________________----------------------________________________________--------------------------
+
+area_tubo = math.pi * (radio_tubo_externo**2)
+area_cara = 2* area_tubo
+
+factor_pentagono = 0.25 * math.sqrt(5*(5 + 2 * math.sqrt(5)))
+largo_arista = math.sqrt(area_cara/factor_pentagono)
+#--------------------------------------------------------------------------------------------------
+
+radio_ext_dodecaedro = (largo_arista / 4.0) * (1+math.sqrt(5)) * math.sqrt(3)
+
+radio_int_dodecaedro = radio_ext_dodecaedro - grosor_pared
+
+#---------------------------------------------------------------------------------
+
+vertices = [ 
+	App.Vector(-1, phi, 0), #1
+	App.Vector(1, phi, 0), #2
+	App.Vector(-1, -phi, 0), # 3
+	App.Vector(1, -phi, 0), #4
+	App.Vector(0, -1, phi),#5
+	App.Vector(0, 1, phi) , #6
+	App.Vector(0, -1,- phi), #7
+	App.Vector(0, 1, -phi), #8
+	App.Vector(phi, 0 ,-1), #9
+	App.Vector(phi, 0 ,1), #10
+	App.Vector(-phi, 0 ,-1), #11
+	App.Vector(-phi, 0 ,1) #12
+	App.Vector(1, 1, 1), #13
+	App.Vector(1, 1, -1), #14
+	App.Vector(1, -1, 1), #15
+	App.Vector(-1, 1, 1), #16
+	App.Vector(1, -1, -1), #17
+	App.Vector(-1, -1, 1), #18
+	App.Vector(-1, 1, -1), #19
+	App.Vector(-1, -1, -1), #20
+
+]
+
+caras = [
+	[3, 11, 7, 15, 13],
+	[7,11,1,9,5], #2
+	[9,1,17,12,5], #2
+	[1,3,17,1,9], #4
+	[3,13,16,17,2], #5
+	[13,15,6,10,2], #6
+	[15,7,5,14,4], #7
+	[6,15,4,18,10], #8
+	[10,18,8,0,2], #9
+	[16,13,2,0,12], #10
+	[4,14,12,0,8], #11
+	[18,4,5,9,19], #12 
+]
+
+vertices_matriz_exterior = [v.normalize().multiply(radio_exterior_dodecaedro) for v in vertices]
+caras_exterior = []
+
+	for f in caras:
+		p1,p2,p3,p4,p5 = vertices_matriz_exterior[f[0]], 
+					vertices_matriz_exterior[f[1]],
+					vertices_matriz_exterior[f[2]],
+					vertices_matriz_exterior[f[3]],
+					vertices_matriz_exterior[f[4]]
+					]
+		line1 = Part.LineSegment(p1, p2).toShape()
+		line2 = Part.LineSegment(p2, p3).toShape()
+		line3 = Part.LineSegment(p3, p4).toShape()	
+		line4 = Part.LineSegment(p4, p5).toShape()
+		line5 = Part.LineSegment(p5, p1).toShape()
+		wire_ext = Part.Wire([line1, line2, line3, line4,line5])
+		caras_exterior.append(Part.Face(wire_ext))
+shell_exterior = Part.makeShell(caras_exterior)
+solido_exterior = Part.makeSolid(shell_exterior)
+obj_exterior.Shape = solido_exterior
+print("dodecaedro exterior")
+
+
+# -----------------             ---------- - - - -- -------------------------------
+#-------------------------------------------------------------------- ---------
+
+
+vertices_matriz_interior = [v.normalize().multiply(radio_exterior_dodecaedro) for v in vertices]
+caras_interior = []
+
+	for f in caras:
+		pu1,pu2,pu3,pu4,pu5 = vertices_matriz_interior[f[0]], 
+					vertices_matriz_interior[f[1]],
+					vertices_matriz_interior[f[2]],
+					vertices_matriz_interior[f[3]],
+					vertices_matriz_interior[f[4]]
+					]
+		lin1 = Part.LineSegment(pu1, pu2).toShape()
+		lin2 = Part.LineSegment(pu2, pu3).toShape()
+		lin3 = Part.LineSegment(pu3, pu4).toShape()	
+		lin4 = Part.LineSegment(pu4, pu5).toShape()
+		lin5 = Part.LineSegment(pu5, pu1).toShape()
+		wire_int = Part.Wire([lin1, lin2, lin3, lin4,lin5])
+		caras_interior.append(Part.Face(wire_int))
+shell_interior = Part.makeShell(caras_interior)
+solido_interior = Part.makeSolid(shell_interior)
+obj_interior.Shape = solido_interior
+print("dodecaedro exterior")
+
+#...………………………………………………………………………….	………………….	……………	………………	………………….	……….	
+
+solido_hueco = solido_exterior.cut(solido_interior)
+
+
+print("solidohueco")
+#---------------------------------------------------------------------------------
+
+lista_vertices = vertices_matriz_exterior.Vertexes
+
+esferas_vertices = []
+
+for v in lista_vertices:
+	esfera = Part.makeSphere(radio_esfera_corte, v.Point)
+	esferas_vertices.append(esfera)
+
+molde_perforaciones = Part.makeCompound(esferas_vertices)
+
+dodecaedro_perforado = solido_hueco.cut(molde_perforaciones)
+
+
+#------------------------------------------------------------------------------------
+
+Part.show(dodecaedro_perforado, "dodecaedro perforado y hueco, quedan los filletes")
+doc.recompute()
+
+
+
+
+
