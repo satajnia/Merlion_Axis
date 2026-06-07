@@ -1,0 +1,239 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="100%" height="100%" id="merlion-axis-svg">
+
+  <defs>
+
+    <pattern id="blueprint-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e0e0e0" stroke-width="0.5"/>
+
+    </pattern>
+
+    <style>
+
+      @import url('[enlace sospechoso eliminado]');
+
+      .title-main { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 52px; fill: #000000; letter-spacing: 4px; }
+
+      .title-sub { font-family: 'Courier Prime', monospace; font-weight: 700; font-size: 16px; fill: #444444; letter-spacing: 2px; }
+
+      .label-sector { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 14px; fill: #ffffff; letter-spacing: 1px; }
+
+      .text-details { font-family: 'Space Grotesk', sans-serif; font-size: 12px; fill: #333333; }
+
+      .text-bold { font-weight: 700; fill: #000000; }
+
+      .outline-thick { stroke: #000000; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+      .outline-medium { stroke: #000000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+      .outline-thin { stroke: #000000; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+
+      .filled-white { fill: #ffffff; }
+
+      .filled-black { fill: #000000; }
+
+    </style>
+
+  </defs>
+
+  <rect width="1200" height="600" fill="#ffffff" />
+
+  <rect width="1200" height="600" fill="url(#blueprint-grid)" opacity="0.6" />
+
+  <rect x="15" y="15" width="1170" height="570" fill="none" stroke="#000000" stroke-width="3" />
+
+  <rect x="22" y="22" width="1156" height="556" fill="none" stroke="#000000" stroke-width="1" stroke-dasharray="5,5" />
+
+  <g transform="translate(600, 80)" text-anchor="middle">
+
+    <text y="0" class="title-main">MERLION AXIS</text>
+
+    <text y="30" class="title-sub">[ LOGISTICAL ROUTE CODE: SIN-KUL-PRIME ]</text>
+
+  
+
+  <!-- SINGAPORE SECTOR -->
+
+  <g transform="translate(60, 240)">
+
+    <path d="M10 240 L35 60 L75 60 L60 240 Z" class="outline-medium filled-white"/>
+
+    <path d="M75 240 L95 60 L135 60 L120 240 Z" class="outline-medium filled-white"/>
+
+    <path d="M135 240 L155 60 L195 60 L180 240 Z" class="outline-medium filled-white"/>
+
+    <path d="M20 50 L220 50 C230 50 235 53 220 65 L40 65 C25 65 15 50 20 50 Z" class="outline-medium filled-white"/>
+
+    <line x1="45" y1="80" x2="52" y2="220" class="outline-thin" stroke-dasharray="2,4"/>
+
+    <line x1="105" y1="80" x2="112" y2="220" class="outline-thin" stroke-dasharray="2,4"/>
+
+    <line x1="165" y1="80" x2="172" y2="220" class="outline-thin" stroke-dasharray="2,4"/>
+
+  
+
+  <g transform="translate(260, 290)">
+
+    <path d="M50 190 Q50 120 25 90 Q15 80 10 70 L90 70 Q85 80 75 90 Q50 120 50 190 Z" class="outline-medium filled-white" />
+
+    <path d="M5 70 C5 40 95 40 95 70 Z" class="outline-thin filled-white" stroke-dasharray="3,3"/>
+
+    <path d="M20 70 L80 70 M30 80 L70 80 M40 90 L60 90" class="outline-thin"/>
+
+  
+
+  <g transform="translate(60, 390)">
+
+    <path d="M10 90 Q50 80 90 90 L100 110 L0 110 Z" class="outline-medium filled-white"/>
+
+    <path d="M20 90 C15 50 35 30 50 30 C65 30 75 15 70 0 C85 10 85 30 80 40 C75 50 85 70 70 90 Z" class="outline-medium filled-white"/>
+
+    <path d="M40 50 Q45 55 50 50 M45 60 Q50 65 55 60 M38 70 Q43 75 48 70" class="outline-thin"/>
+
+    <path id="water-spray" d="M72 23 Q 160 30 250 110 Q 160 50 72 23" fill="none" stroke="#000000" stroke-width="2.5" stroke-dasharray="8,4" />
+
+  
+
+  <!-- KUALA LUMPUR SECTOR -->
+
+  <g transform="translate(820, 180)">
+
+    <line x1="40" y1="320" x2="40" y2="40" class="outline-thick" />
+
+    <line x1="33" y1="320" x2="33" y2="100" class="outline-thin" />
+
+    <line x1="47" y1="320" x2="47" y2="100" class="outline-thin" />
+
+    <path d="M15 80 L20 60 L60 60 L65 80 L50 95 L30 95 Z" class="outline-medium filled-white"/>
+
+    <line x1="40" y1="40" x2="40" y2="0" class="outline-medium" />
+
+  
+
+  <g transform="translate(920, 120)">
+
+    <path d="M10 380 L25 60 L35 60 L40 40 L45 60 L55 60 L70 380 Z" class="outline-medium filled-white"/>
+
+    <path d="M110 380 L125 60 L135 60 L140 40 L145 60 L155 60 L170 380 Z" class="outline-medium filled-white"/>
+
+    <rect x="58" y="200" width="64" height="12" class="outline-medium filled-white"/>
+
+    <line x1="58" y1="206" x2="122" y2="206" class="outline-thin"/>
+
+    <line x1="40" y1="40" x2="40" y2="10" class="outline-medium"/>
+
+    <line x1="140" y1="40" x2="140" y2="10" class="outline-medium"/>
+
+  
+
+  <!-- INTERCONNECTION -->
+
+  <g transform="translate(420, 415)">
+
+    <rect x="0" y="0" width="70" height="85" class="outline-medium filled-white"/>
+
+    <polygon points="-5,0 35,-20 75,0" class="outline-medium filled-white"/>
+
+    <rect x="70" y="10" width="80" height="75" class="outline-medium filled-white"/>
+
+    <polygon points="65,10 110,-10 155,10" class="outline-medium filled-white"/>
+
+    <rect x="150" y="0" width="70" height="85" class="outline-medium filled-white"/>
+
+    <polygon points="145,0 185,-20 225,0" class="outline-medium filled-white"/>
+
+  
+
+  <path d="M 30 500 L 1170 500" class="outline-thick" />
+
+  <!-- DYNAMIC TRANSIT TRACK & TRAIN -->
+
+  <g class="outline-medium filled-white">
+
+    <path d="M 180 500 L 190 380 L 210 380 L 220 500 Z" />
+
+    <path d="M 380 500 L 390 380 L 410 380 L 420 500 Z" />
+
+    <path d="M 580 500 L 590 380 L 610 380 L 620 500 Z" />
+
+    <path d="M 780 500 L 790 380 L 810 380 L 820 500 Z" />
+
+    <path d="M 980 500 L 990 380 L 1010 380 L 1020 500 Z" />
+
+  
+
+  <rect x="30" y="365" width="1140" height="15" class="outline-thick filled-white" />
+
+  <g id="transit-train" transform="translate(100, 332)">
+
+    <path d="M 80 0 L 110 10 L 110 30 L 0 30 L 0 0 Z" class="outline-thick filled-black" />
+
+    <rect x="85" y="5" width="20" height="10" fill="#ffffff" />
+
+    <circle cx="20" cy="15" r="4" fill="#ffffff"/>
+
+    <circle cx="50" cy="15" r="4" fill="#ffffff"/>
+
+    <rect x="-10" y="12" width="10" height="6" class="outline-thin filled-black" />
+
+    <path d="M -110 0 L -10 0 L -10 30 L -110 30 Z" class="outline-thick filled-black" />
+
+    <rect x="-100" y="5" width="25" height="10" fill="#ffffff" />
+
+    <rect x="-65" y="5" width="25" height="10" fill="#ffffff" />
+
+  
+
+  <!-- FOOTER INFO -->
+
+  <g transform="translate(50, 520)">
+
+    <rect x="0" y="0" width="180" height="24" rx="4" class="filled-black" />
+
+    <text x="90" y="16" class="label-sector" text-anchor="middle">SINGAPORE SECTOR</text>
+
+  
+
+  <g transform="translate(970, 520)">
+
+    <rect x="0" y="0" width="180" height="24" rx="4" class="filled-black" />
+
+    <text x="90" y="16" class="label-sector" text-anchor="middle">KUALA LUMPUR SECTOR</text>
+
+  
+
+  <script type="text/javascript">
+
+    <![CDATA[
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+      var train = document.getElementById("transit-train");
+
+      var currentX = 100;
+
+      var speed = 1.5;
+
+      var minX = -150;
+
+      var maxX = 1250;
+
+      function animateTrain() {
+
+        currentX += speed;
+
+        if (currentX > maxX) { currentX = minX; }
+
+        train.setAttribute("transform", "translate(" + currentX + ", 332)");
+
+        requestAnimationFrame(animateTrain);
+
+      }
+
+      animateTrain();
+
+    });
+
+    ]]>
+
+  </script>
