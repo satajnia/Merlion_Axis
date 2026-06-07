@@ -1,0 +1,75 @@
+import FreeCAD as App
+
+import Part
+
+import math
+
+# 1. Ajustes del diseño (Puedes cambiar estos números)
+
+radio_helice = 20.0       # El radio de la hélice
+
+radio_esfera = 20.0       # ¡Igual al radio de la hélice!
+
+grosor_pared = 10.0       # Grosor de la pared del tubo
+
+altura_tubo = 150.0       # Altura total del tubo
+
+num_esferas = 40          # Cuántas perlas quieres en el collar
+
+# Ángulo de divergencia áurea en radianes (137.5 grados)
+
+angulo_aureo = math.radians(137.5)
+
+# Calcular el paso vertical para que las esferas queden en contacto (collar de perlas)
+
+paso_z = (2 * radio_esfera) / (num_esferas * 0.3) 
+
+doc = App.newDocument("Tubo_Helice_Aurea")
+
+# 2. Creamos el Tubo Base
+
+r_exterior = radio_helice + (grosor_pared / 2.0)
+
+r_interior = radio_helice - (grosor_pared / 2.0)
+
+cilindro_ext = Part.makeCylinder(r_exterior, altura_tubo)
+
+cilindro_int = Part.makeCylinder(r_interior, altura_tubo)
+
+tubo = cilindro_ext.cut(cilindro_int)
+
+# 3. Creamos el Collar de Perlas en Espiral Áurea
+
+esferas = []
+
+for i in range(num_esferas):
+
+    theta = i * angulo_aureo
+
+    
+
+    x = radio_helice * math.cos(theta)
+
+    y = radio_helice * math.sin(theta)
+
+    z = (i * paso_z) + radio_esfera
+
+    
+
+    if z < altura_tubo:
+
+        esfera = Part.makeSphere(radio_esfera, App.Vector(x, y, z))
+
+        esferas.append(esfera)
+
+collar_perlas = Part.makeCompound(esferas)
+
+# 4. Hacemos el Recorte Booleano
+
+tubo_recortado = tubo.cut(collar_perlas)
+
+# 5. Mostramos el resultado en la pantalla 3D
+
+objeto_final = Part.show(tubo_recortado)
+
+doc.recompute()
