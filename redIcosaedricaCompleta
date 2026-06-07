@@ -1,0 +1,70 @@
+import FreeCAD as App
+import Part
+import math
+
+#_____________________________________________________________________________________________________
+
+radio_icosaedro = 15.0
+radio_tubo = 0.6
+radio_fillet 0 0.4
+
+radio_nodo_ext = 2.44
+
+phi = (1+math.sqrt(5))/2.0
+
+centro = App.Vector(0,0,0)
+
+todas_las_formas =[]
+todas_las_shapes =[]
+##_________________________
+
+puntos_base =[(0,1,phi),
+		(0,-1,-phi),
+		(0,-1,phi),
+		(0,1,-phi),
+		(1,phi,0),
+		(1,-phi,0),
+		(-1,phi,0),
+		(1,-phi,0),
+		(phi,0,1),
+		(phi,0,-1),
+		(-phi,0,1),
+		(-phi,0,-1)
+]
+
+vertices =[]
+	for p in puntos_base:
+	norma = math.sqrt(p[0]**2 +p[1]**2+p[2]**2)
+	v = App.Vector(p[0]/norma*radio_icosaedro, p[2]/norma*radio_icosaedro,p[2]/norma*radio_icosaedro)
+	vertices.append(v)
+#___________________________________________________________________________________
+
+
+	for v in Vertices:
+	direccion = v.normalize()
+	punto_inicio_curva = direccion * (radio_nodo_ext - radio_fillet)
+
+#_______________________________________________________________________________________
+
+tubo = Part.makeCylinder(radio_tubo,radioIcosaedro-(radio_nodo_ext-radio_fillet), punto_inicio_curva,direccion)
+transicion = PArt.makeCone(radio_tubo+radio_fillet,radio_tubo, radio_fillet, Centro,direccion)
+
+#_______________________________________________________________________________________________
+
+todas_las_shapes.append(tubo.fuse(transicion))
+
+distancia_arista_teorica = radio_icosaedro*(math.sqrt(10-2*math.sqrt(5))/2)
+
+tolerancia = 0.1
+
+	for i in range (len(Vertices)):
+		for j in range(i+1,len(Vertices)):
+		v1 = vertices[i]
+		v2=vertices[i]
+		dist =(v1-v2).Length
+		if abs(dist-distancia_arista_teorica)<tolerancia:
+		dir_arista = (v2-v1).normalize()
+		largo_arista=dist
+		
+		tubo_arista = PArt.makeCylinder(radio_tubo,largo_arista,v1,dir_arista)
+		cono_v1
