@@ -1,0 +1,159 @@
+import FreeCAD as App
+
+import Part
+
+import math
+
+# --- PARAMETROS MAESTROS ( Spreadsheet ) ---
+
+radio_icosaedro = 15.0  # Radio exterior (distancia del centro al vértice)
+
+radio_tubo = 0.6        # Radio de los tubos (aristas y brazos)
+
+radio_fillet = 0.4      # Radio de la curva suave / transición
+
+radio_nodo_ext = 2.44   # El límite de tu dodecaedro central
+
+phi = (1 + math.sqrt(5)) / 2.0
+
+doc = App.activeDocument()
+
+if not doc:
+
+    doc = App.newDocument("Icosaedro_Estructural_Perfecto")
+
+centro = App.Vector(0, 0, 0)
+
+todas_las_formas = []
+
+todas_las_shapes = []
+
+# --- 1. GENERAR LOS 12 VÉRTICES ABSOLUTOS ---
+
+puntos_base = [
+
+    (0, 1, phi), (0, 1, -phi), (0, -1, phi), (0, -1, -phi),
+
+    (1, phi, 0), (1, -phi, 0), (-1, phi, 0), (-1, -phi, 0),
+
+    (phi, 0, 1), (phi, 0, -1), (-phi, 0, 1), (-phi, 0, -1)
+
+]
+
+vertices = []
+
+for p in puntos_base:
+
+    norma = math.sqrt(p[0]**2 + p[1]**2 + p[2]**2)
+
+    v = App.Vector(p[0]/norma * radio_icosaedro, 
+
+                   p[1]/norma * radio_icosaedro, 
+
+                   p[2]/norma * radio_icosaedro)
+
+    vertices.append(v)
+
+# --- 2. CREAR LOS 12 BRAZOS CENTRALES (CON FILLET) ---
+
+for v in vertices:
+
+    direccion = v.normalize()
+
+    punto_inicio_curva = direccion * (radio_nodo_ext - radio_fillet)
+
+    
+
+    # Tubo recto del brazo
+
+    tubo = Part.makeCylinder(radio_tubo, radio_icosaedro - (radio_nodo_ext - radio_fillet), punto_inicio_curva, direccion)
+
+    # Transición curva (cono) en el nodo central
+
+    transicion = Part.makeCone(radio_tubo + radio_fillet, radio_tubo, radio_fillet, centro, direccion)
+
+    
+
+    todas_las_shapes.append(tubo.fuse(transicion))
+
+# --- 3. CREAR LAS 30 ARISTAS EXTERIORES (CON FILLET) ---
+
+distancia_arista_teorica = radio_icosaedro * (math.sqrt(10 - 2 * math.sqrt(5)) / 2.0)
+
+tolerancia = 0.1
+
+for i in range(len(vertices)):
+
+    for j in range(i + 1, len(vertices)):
+
+        v1 = vertices[i]
+
+        v2 = vertices[j]
+
+        dist = (v1 - v2).Length
+
+        
+
+        if abs(dist - distancia_arista_teorica) < tolerancia:
+
+            dir_arista = (v2 - v1).normalize()
+
+            largo_arista = dist
+
+            
+
+            tubo_arista = Part.makeCylinder(radio_tubo, largo_arista, v1, dir_arista)
+
+            
+
+            cono_v1 = Part.makeCone(radio_tubo + radio_fillet, radio_tubo, radio_fillet, v1, dir_arista)
+
+            cono_v2 = Part.makeCone(radio_tubo, radio_tubo + radio_fillet, radio_fillet, v2 - (dir_arista * radio_fillet), dir_arista)
+
+            
+
+            arista_completa = tubo_arista.fuse(cono_v1).fuse(cono_v2)
+
+            todas_las_formas.append(arista_completa)
+
+# --- 4. FUSIÓN GENERAL Y RECORTE DEL NODO CENTRAL ---
+
+estructura_completa = Part.makeCompound(todas_las_formas).fuse(todas_las_shapes)
+
+puntos_dodeca = [
+
+    (0, 1/phi, phi), (0, 1/phi, -phi), (0, -1/phi, phi), (0, -1/phi, -phi),
+
+    (phi, 0, 1/phi), (phi, 0, -1/phi), (-phi, 0, 1/phi), (-phi, 0, -1/phi),
+
+    (1/phi, phi, 0), (1/phi, -phi, 0), (-1/phi, phi, 0), (-1/phi, -phi, 0),
+
+    (1, 1, 1), (1, 1, -1), (1, -1, 1), (1, -1, -1),
+
+    (-1, 1, 1), (-1, 1, -1), (-1, -1, 1), (-1, -1, -1)
+
+]
+
+vertices_dodeca = []
+
+for p in puntos_dodeca:
+
+    n = math.sqrt(p[0]**2 + p[1]**2 + p[2]**2)
+
+    vertices_dodeca.append(App.Vector(p[0]/n * radio_nodo_ext, p[1]/n * radio_nodo_ext, p[2]/n * radio_nodo_ext))
+
+nube = Part.makeCompound([Part.makeVertex(v.x, v.y, v.z) for v in vertices_dodeca])
+
+dodecaedro_centro = nube.makeConvexHull()
+
+nodo_centro_organico = estructura_completa.common(dodecaedro_centro)
+
+solido_final = estructura_completa.fuse(nodo_centro_organico)
+
+resultado = doc.addObject("Part::Feature", "Red_Icosaedrica_Organica")
+
+resultado.Shape = solido_final
+
+doc.recompute()
+
+print("¡Estructura total completada! Nodos y aristas conectados con transiciones suaves.")
