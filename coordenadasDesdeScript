@@ -1,0 +1,63 @@
+import FreeCAD as App
+
+import Part
+
+import Spreadsheet
+
+from BasicShapes import Platonic
+
+# 1. Creamos el documento de FreeCAD
+
+doc = App.newDocument("Dodecaedro_Y_Spreadsheet")
+
+# 2. Generamos el dodecaedro automático (Tamaño 15.0 mm, por ejemplo)
+
+dodecaedro = Platonic.makePlatonic(5, 15.0)
+
+Part.show(dodecaedro)
+
+# 3. Extraemos la lista de sus 20 vértices reales
+
+lista_vertices = dodecaedro.Vertexes
+
+# 4. ¡LA MAGIA! Creamos una hoja de cálculo dentro de FreeCAD
+
+hoja = doc.addObject("Spreadsheet::Sheet", "Coordenadas_Vertices")
+
+# 5. Ponemos los títulos de las columnas (Fila 1)
+
+hoja.set("A1", "Vértice")
+
+hoja.set("B1", "Coordenada X")
+
+hoja.set("C1", "Coordenada Y")
+
+hoja.set("D1", "Coordenada Z")
+
+# 6. Usamos un bucle para rellenar las 20 filas automáticamente
+
+for i, vertice in enumerate(lista_vertices):
+
+    fila = str(i + 2) # Empezamos en la fila 2 para no pisar los títulos
+
+    
+
+    # Conseguimos el punto X, Y, Z de ese vértice concreto
+
+    punto = vertice.Point
+
+    
+
+    # Escribimos los datos en la celda correspondiente (ej: A2, B2, C2, D2...)
+
+    hoja.set("A" + fila, f"Vértice {i}")
+
+    hoja.set("B" + fila, str(punto.x))
+
+    hoja.set("C" + fila, str(punto.y))
+
+    hoja.set("D" + fila, str(punto.z))
+
+# 7. Refrescamos todo el documento para que aparezca en pantalla
+
+doc.recompute()
