@@ -1,0 +1,132 @@
+
+# ==============================================================================
+
+# MACRO PARAMÉTRICA FREECAD: GENERADOR DE MÓDULOS "PRINGLES"
+
+# Proyecto: Satajnia - Pasarela Tridimensional de Singapur
+
+# ==============================================================================
+
+import FreeCAD as App
+
+import Part
+
+import math
+
+def crear_modulo_pringles(largo=10.0, ancho=6.0, ancho_camino=1.5, altura_curvatura=2.5):
+
+    """
+
+    Crea una geometría de paraboloide hiperbólico basada en la ecuación:
+
+    Z = (X^2 / a^2) - (Y^2 / b^2)
+
+    """
+
+    doc = App.activeDocument()
+
+    if not doc:
+
+        doc = App.newDocument("Satajnia_Pringles_Modulo")
+
+        
+
+    doc.openTransaction("Crear Pringles Paramétrica")
+
+    
+
+    a = (largo / 2.0) / math.sqrt(max(altura_curvatura, 0.1))
+
+    b = (ancho / 2.0) / math.sqrt(max(altura_curvatura, 0.1))
+
+    
+
+    pasos_u = 30  
+
+    pasos_v = 20  
+
+    
+
+    puntos_superficie = []
+
+    
+
+    for i in range(pasos_u + 1):
+
+        u = - (largo / 2.0) + (i * (largo / pasos_u))
+
+        fila_puntos = []
+
+        for j in range(pasos_v + 1):
+
+            v = - (ancho / 2.0) + (j * (ancho / pasos_v))
+
+            z = (u**2 / a**2) - (v**2 / b**2)
+
+            fila_puntos.append(App.Vector(u, v, z))
+
+        puntos_superficie.append(fila_puntos)
+
+        
+
+    caras = []
+
+    for i in range(pasos_u):
+
+        for j in range(pasos_v):
+
+            p1 = puntos_superficie[i][j]
+
+            p2 = puntos_superficie[i+1][j]
+
+            p3 = puntos_superficie[i+1][j+1]
+
+            p4 = puntos_superficie[i][j+1]
+
+            
+
+            poly1 = Part.makePolygon([p1, p2, p3, p1])
+
+            face1 = Part.Face(poly1)
+
+            poly2 = Part.makePolygon([p1, p3, p4, p1])
+
+            face2 = Part.Face(poly2)
+
+            
+
+            caras.append(face1)
+
+            caras.append(face2)
+
+            
+
+    shell = Part.makeShell(caras)
+
+    solid_pringles = Part.makeSolid(shell)
+
+    
+
+    objeto_final = doc.addObject("Part::Feature", "Eslabón_Pringles")
+
+    objeto_final.Shape = solid_pringles
+
+    
+
+    objeto_final.addProperty("App::PropertyLength", "LargoPieza", "Dimensiones").LargoPieza = largo
+
+    objeto_final.addProperty("App::PropertyLength", "AnchoPieza", "Dimensiones").AnchoPieza = ancho
+
+    objeto_final.addProperty("App::PropertyLength", "AnchoCamino", "Dimensiones").AnchoCamino = ancho_camino
+
+    
+
+    doc.commitTransaction()
+
+    doc.recompute()
+
+    
+
+    print("Módulo 'Pringles' de Satajnia generado.")
+
+    return objeto_final
