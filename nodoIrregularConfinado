@@ -1,0 +1,148 @@
+
+import FreeCAD as App
+
+import Part
+
+import math
+
+doc = App.newDocument("Nodo_Irregular_Confinado")
+
+# ==========================================
+
+# 1. PARÁMETROS DE CONTROL (Ajustables)
+
+# ==========================================
+
+distancia_caras = 12.0     # Distancia desde el centro del nodo a las caras planas
+
+radio_esfera_limite = 18.0  # El radio de confinamiento máximo (R)
+
+grosor_tubo = 4.0           # Para aplicar el fillet proporcional después
+
+# ==========================================
+
+# 2. GENERACIÓN DE VECTORES (Geometría del Icosaedro)
+
+# ==========================================
+
+# Proporción áurea para los vértices del icosaedro
+
+phi = (1.0 + math.sqrt(5.0)) / 2.0
+
+# Vector Radial (El "+1" que va al centro de la matrioska, asumimos eje Z por simplicidad)
+
+v_radial = App.Vector(0, 0, -1).normalize()
+
+# Los 5 Vectores Perimetrales (Las aristas del icosaedro que convergen en el vértice)
+
+# Calculamos las direcciones exactas de los 5 vecinos en el espacio
+
+vectores_perimetrales = []
+
+for i in range(5):
+
+    angle = i * (2 * math.pi / 5)
+
+    # Geometría exacta de la copa del icosaedro
+
+    x = math.cos(angle) * (1.0 / math.sqrt(1.0 + phi**2))
+
+    y = math.sin(angle) * (1.0 / math.sqrt(1.0 + phi**2))
+
+    z = phi / math.sqrt(1.0 + phi**2)
+
+    vectores_perimetrales.append(App.Vector(x, y, z).normalize())
+
+# Juntamos los 6 vectores del problema (5 + 1)
+
+todos_los_vectores = [v_radial] + vectores_perimetrales
+
+# ==========================================
+
+# 3. ESCULTURA POR INTERSECCIÓN DE PLANOS
+
+# ==========================================
+
+# Empezamos con un bloque sólido lo bastante grande para ser rebanado
+
+solido_nodo = Part.makeBox(100, 100, 100)
+
+solido_nodo.translate(App.Vector(-50, -50, -50)) # Centrado en (0,0,0)
+
+for v in todos_los_vectores:
+
+    # Punto en el espacio donde se sitúa la cara perpendicular
+
+    punto_plano = v * distancia_caras
+
+    
+
+    # Creamos el plano infinito perpendicular al vector
+
+    plano_corte = Part.makePlane(200, 200, punto_plano, v)
+
+    plano_corte.translate(App.Vector(-100, -100, 0)) # Centrar el plano de corte
+
+    
+
+    # Cortamos el sólido. Nos quedamos con la parte interna (la que mira al origen)
+
+    # En FreeCAD, medio espacio se define cortando con el plano orientado
+
+    solido_nodo = solido_nodo.slice(plano_corte, App.Vector(0,0,0))[0]
+
+# ==========================================
+
+# 4. BUCLE DE REITERACIÓN (Confinamiento Esférico)
+
+# ==========================================
+
+# Analizamos los vértices del poliedro irregular resultante
+
+vertices_actuales = solido_nodo.Vertexes
+
+planos_extras_confinamiento = []
+
+for vtx in vertices_actuales:
+
+    punto_vtx = vtx.Point
+
+    distancia_al_centro = punto_vtx.Length
+
+    
+
+    # SI SE SALE DE LA ESFERA LÍMITE: ¡Tajo de confinamiento!
+
+    if distancia_al_centro > radio_esfera_limite:
+
+        # Vector dirección hacia la esquina excedente
+
+        v_exceso = punto_vtx.normalize()
+
+        # Colocamos el plano de corte exactamente en el radio límite R
+
+        punto_limite = v_exceso * radio_esfera_limite
+
+        
+
+        plano_confinamiento = Part.makePlane(200, 200, punto_limite, v_exceso)
+
+        plano_confinamiento.translate(App.Vector(-100, -100, 0))
+
+        
+
+        # Rebanamos la esquina que sobresale
+
+        solido_nodo = solido_nodo.slice(plano_confinamiento, App.Vector(0,0,0))[0]
+
+# ==========================================
+
+# 5. RENDERIZADO EN FREECAD
+
+# ==========================================
+
+# Mostramos el poliedro irregular perfectamente confinado y facetado
+
+Part.show(solido_nodo, "Poliedro_Irregular_Nodo")
+
+doc.recompute()
